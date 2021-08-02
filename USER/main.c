@@ -6,8 +6,8 @@
 //#include "World.h"
 //#include "timer_pic.h"
 //#include "temper_pic.h"
-
-#include "part.h"
+#include "deej_logo.h"
+//#include "part.h"
 
 void speed_test(void);
 
@@ -28,8 +28,9 @@ int main(void)
 //		TIM8_Config(1000,12000);   //配置定时器8，0.5秒中断一次
 
 		TIM3_Config(200,2400);//2mS
-		
-		LCD_Fill_Pic(0,0,800,480,(u32*)gImage_part);//显示一张图片
+	
+		//LCD_Fill_Pic(0,0,800,480,(u32*)gImage_part);//显示一张图片
+		LCD_Fill_Pic(235,48,384,384,(u32*)gImage_deej_logo);//显示一张图片
 		GUI_Delay(500);
 
 //		SDIO_Init();//SD卡的功能已经就绪，但没插卡时一般不开启

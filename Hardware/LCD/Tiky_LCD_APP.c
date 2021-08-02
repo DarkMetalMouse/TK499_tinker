@@ -896,7 +896,7 @@ void LCD_Fill_Pic(u16 x, u16 y,u16 pic_H, u16 pic_V, u32* pic)
 		u16 i,j;
 		u32 Xstart,k=0;
 		Xstart = XSIZE_PHYS*x;
-		for(i=pic_V-1;i>0;i--)
+		for(i=0;i<pic_V;i++)
 		{
 		for(j=0;j<pic_H;j++)
 		LTDC_emWin[Xstart+i+XSIZE_PHYS*j+y]=pic[k++];
@@ -904,7 +904,7 @@ void LCD_Fill_Pic(u16 x, u16 y,u16 pic_H, u16 pic_V, u32* pic)
 //	 u16 i,j;
 //	u32 Xstart,k=0;
 //	Xstart = XSIZE_PHYS*x;
-//	for(i=0;i<pic_V;i++)
+//	for(i=pic_V-1;i>0;i--)
 //	{
 //		for(j=0;j<pic_H;j++)
 //		LTDC_emWin[Xstart+i+XSIZE_PHYS*j+y]=pic[k++];
