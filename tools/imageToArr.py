@@ -13,13 +13,11 @@ def convertImage(img, output_path):
             count = 0
             for y in range(img.height):
                 for x in range(img.width):
-                    rgb = img.getpixel((x, y))
-                    for value in reversed(rgb):
-                        count += 1
-                        f.write(f"{value:#04X},")
+                    color = img.getpixel((x, y))
+                    value = color[2] + (color[1] << 8) + (color[0] << 16)
+                    f.write(f"{value:#08X},")
                     count += 1
-                    f.write("0X00,")
-                    if(count % 16 == 0):
+                    if(count % 12 == 0):
                         f.write('\n')
             f.write("};\n")
     except PermissionError:
