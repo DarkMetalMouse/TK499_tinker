@@ -7,7 +7,7 @@ def convertImage(img, output_path):
     try:
         with open(os.path.splitext(output_path)[0] + ".h", 'w') as f:
             f.write(
-                f"__align(4) const unsigned char gImage_{name}[{img.width*img.height*4}] = ")
+                f"const u32 gImage_{name}[{img.width*img.height*4}] = ")
             f.write("{\n")
 
             count = 0
