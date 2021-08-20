@@ -563,6 +563,11 @@
               <FileType>1</FileType>
               <FilePath>.\Tutorial\WIDGET_ButtonRound.c</FilePath>
             </File>
+            <File>
+              <FileName>DeejDLG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Tutorial\DeejDLG.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

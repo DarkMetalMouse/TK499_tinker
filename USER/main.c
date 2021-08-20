@@ -8,7 +8,7 @@
 //#include "temper_pic.h"
 #include "deej_logo.h"
 //#include "part.h"
-
+#include "Tiky_LCD_APP.h"
 void speed_test(void);
 
 int main(void)
@@ -21,49 +21,58 @@ int main(void)
 		
 		NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//2：2，全局性函数，仅需设置一次
 		User_RGB_LCD_Initial();//初始化液晶屏入口
-		UartInit(UART1,460800);      //配置串口1，波特率为460800
+		UartInit(UART1,115200);      //配置串口1，波特率为460800
 		printf("\r\n  Hello!welcome to use TK499!  \r\n");
 	
 		GUI_Init();//emWin 初始化
+		GUI_SetTextMode(GUI_TM_TRANS);//透明方式显示字体，即无背景
 //		TIM8_Config(1000,12000);   //配置定时器8，0.5秒中断一次
 
 		TIM3_Config(200,2400);//2mS
 	
 		//LCD_Fill_Pic(0,0,800,480,(u32*)gImage_part);//显示一张图片
-		LCD_Fill_Pic(235,48,384,384,(u32*)gImage_deej_logo);//显示一张图片
-		GUI_Delay(500);
+		LCD_Fill_Pic((LCD_GetXSize()-384)/2,(LCD_GetYSize()-384)/2,384,384,(u32*)gImage_deej_logo);//显示一张图片
+		
+		GUI_SetFont(&GUI_FontComic24B_ASCII);
+		GUI_SetColor(GUI_WHITE);
+		GUI_DispStringHCenterAt("Hello, welcome to TK499!",LCD_GetXSize()/2,(LCD_GetYSize()+384)/2+10);
+	
+		GUI_Delay(100);
 
 //		SDIO_Init();//SD卡的功能已经就绪，但没插卡时一般不开启
 //		scan_TFCard_CTP_key();//按键或者触摸屏上下翻，按中键退出，设置上限是200张图片，支持16、24、32位的位图，支持奇数分辨率
 //		display_picture("8.bmp");
 //		Test_SDcard_read_TXT();
-
+	
 //		Lcd_ColorBox(0,0,XSIZE_PHYS,YSIZE_PHYS,White);//用矩形填充函数清屏，填充的大小与屏分辨率一样就行
 //		speed_test();//速度测试
 
-		GUI_DrawGradientV(0, 0, LCD_GetXSize(), LCD_GetYSize(), 0xFF8080, 0x8080FF);//全屏显示渐变色
-		GUI_SetTextMode(GUI_TM_TRANS);//透明方式显示字体，即无背景
+//		GUI_DrawGradientV(0, 0, LCD_GetXSize(), LCD_GetYSize(), 0xFF8080, 0x8080FF);//全屏显示渐变色
 		
-		//============= 外置XBF字体测试 包含全字库 (注意；测试全字库，要把字库下载进去才行，下载字库与下载程序方式一样，参考评估板下载说明)=============//
-		XBF_Disp();//宋体16*16
-		XKF24_Disp();//经典行楷繁
-		XKJ32_Disp();//迷你简行楷32
-		XKF_NumAllDisp();//数码管字体
-		GUI_Delay(500);//延时一会儿看看效果
-			
-		//============= 用取模到内部数组方式显示少量汉字 =============//
-		innner_HZ();
+//		//============= 外置XBF字体测试 包含全字库 (注意；测试全字库，要把字库下载进去才行，下载字库与下载程序方式一样，参考评估板下载说明)=============//
+//		XBF_Disp();//宋体16*16
 
-		
-		COLOR_ShowColorBar();//显示一个彩条
-		GUI_Delay(100);
-		
+//		XKF24_Disp();//经典行楷繁
+//		XKJ32_Disp();//迷你简行楷32
+//		XKF_NumAllDisp();//数码管字体
+//		GUI_Delay(500);//延时一会儿看看效果
+//			
+//		//============= 用取模到内部数组方式显示少量汉字 =============//
+//		innner_HZ();
+
+//		
+//		COLOR_ShowColorBar();//显示一个彩条
+//		GUI_Delay(100);
+		CreateDeej();
+		//printf("CreateDeej\r\n");
 		while(1) //几个子例程，可以逐个释放出来用
 			{
+				UpdateDeej();
+				GUI_Delay(10);
 //				WIDGET_ButtonRound();
 //				WIDGET_NumPad();
 //				VGA_Demonstration();
-				WIDGET_Effect();
+//				WIDGET_Effect();
 //				SKINNING_NestedModal();
 
 			}
