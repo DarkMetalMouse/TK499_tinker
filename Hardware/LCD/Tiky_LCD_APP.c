@@ -1138,7 +1138,7 @@ char display_picture(char *filename)
 				j=0;
 				for(ty=0;ty<temp;ty+=3)//for(j=0;j<xLong;j++)
 				{	
-					LTDC_emWin[Xstart+i+XSIZE_PHYS*j+Ystart]=((*(ty +0+buffer)<<16))|(*(ty +1+buffer)<<8)|(*(ty +2+buffer));
+					LTDC_emWin[Xstart+bmp.pic_h_l-i+XSIZE_PHYS*j+Ystart]=((*(ty +0+buffer)))|(*(ty +1+buffer)<<8)|(*(ty +2+buffer)<<16);
 					j++;
 				}
 			}
@@ -1168,6 +1168,17 @@ char display_picture(char *filename)
 					for(ty=0;ty<temp;ty+=4)
 						{
 							TK80->DINR = ((*(ty +0+buffer)<<16))|(*(ty +1+buffer)<<8)|(*(ty +2+buffer));
+//							u32 old_color;
+//							u32 total;
+//							u32 alpha;
+//							u32 new_color;
+//							new_color = (((*(ty +0+buffer)))|(*(ty +1+buffer)<<8)|(*(ty +2+buffer)<<16));
+//							alpha = (*(ty +3+buffer)<<24);
+//							printf("%u\r\n",alpha);
+//							old_color = LTDC_emWin[Xstart+bmp.pic_h_l-i+XSIZE_PHYS*j+Ystart];
+//							total = new_color*alpha/255 + old_color*(255-alpha)/255;
+//							
+//							LTDC_emWin[Xstart+bmp.pic_h_l-i+XSIZE_PHYS*j+Ystart] = total;
 						}
 				}
 		}

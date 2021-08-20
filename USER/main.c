@@ -39,9 +39,10 @@ int main(void)
 	
 		GUI_Delay(100);
 
-//		SDIO_Init();//SD卡的功能已经就绪，但没插卡时一般不开启
+
+		SDIO_Init();//SD卡的功能已经就绪，但没插卡时一般不开启
 //		scan_TFCard_CTP_key();//按键或者触摸屏上下翻，按中键退出，设置上限是200张图片，支持16、24、32位的位图，支持奇数分辨率
-//		display_picture("8.bmp");
+		display_picture("8.bmp");
 //		Test_SDcard_read_TXT();
 	
 //		Lcd_ColorBox(0,0,XSIZE_PHYS,YSIZE_PHYS,White);//用矩形填充函数清屏，填充的大小与屏分辨率一样就行
@@ -63,11 +64,11 @@ int main(void)
 //		
 //		COLOR_ShowColorBar();//显示一个彩条
 //		GUI_Delay(100);
-		CreateDeej();
+		//CreateDeej();
 		//printf("CreateDeej\r\n");
 		while(1) //几个子例程，可以逐个释放出来用
 			{
-				UpdateDeej();
+				//UpdateDeej();
 				GUI_Delay(10);
 //				WIDGET_ButtonRound();
 //				WIDGET_NumPad();
