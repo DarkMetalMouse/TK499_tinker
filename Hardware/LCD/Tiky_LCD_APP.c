@@ -10,6 +10,9 @@
 #include "TK499_I2C.h"
 #include "TK499_GPIO.h"
 #include "main.h"
+
+#define ALPHA_COMPOSITE(bg,fg,a) ( (((fg) * (a)) + ((bg) * (255-(a)))) >> 8 )
+
 #if USE_GT911_CTP
 
 void GUI_TOUCH_X_ActivateX(void) {}
@@ -1162,25 +1165,22 @@ char display_picture(char *filename)
 		else if(bmp.pic_dip==32)	
 		{
 			temp=bmp.pic_w_l*4;								 //如果是32位的位图，一行是pic_w_l*4个字节
-			for (tx = 0; tx < bmp.pic_h_l; tx++)
-				{
-					f_read(&fsrc, buffer, (bmp.pic_w_l)*4, &br);
-					for(ty=0;ty<temp;ty+=4)
-						{
-							TK80->DINR = ((*(ty +0+buffer)<<16))|(*(ty +1+buffer)<<8)|(*(ty +2+buffer));
-//							u32 old_color;
-//							u32 total;
-//							u32 alpha;
-//							u32 new_color;
-//							new_color = (((*(ty +0+buffer)))|(*(ty +1+buffer)<<8)|(*(ty +2+buffer)<<16));
-//							alpha = (*(ty +3+buffer)<<24);
-//							printf("%u\r\n",alpha);
-//							old_color = LTDC_emWin[Xstart+bmp.pic_h_l-i+XSIZE_PHYS*j+Ystart];
-//							total = new_color*alpha/255 + old_color*(255-alpha)/255;
-//							
-//							LTDC_emWin[Xstart+bmp.pic_h_l-i+XSIZE_PHYS*j+Ystart] = total;
-						}
+			
+			Xstart = XSIZE_PHYS*((YSIZE_PHYS-bmp.pic_w_l)/2);
+			Ystart = (XSIZE_PHYS-bmp.pic_h_l)/2;
+			for(i=0;i<bmp.pic_h_l;i++)
+			{
+				f_read(&fsrc, buffer, temp, &br);
+				for(ty=0;ty<temp;ty+=4)
+				{	
+					char alpha = (*(ty +3+buffer));
+					u32 old_color = LTDC_emWin[Xstart+bmp.pic_h_l-i+Ystart+XSIZE_PHYS*(ty>>2)];
+					
+					LTDC_emWin[Xstart+bmp.pic_h_l-i+Ystart+XSIZE_PHYS*(ty>>2)] = (ALPHA_COMPOSITE((u8)old_color,         (*(ty +0+buffer)), alpha))
+																																			|((ALPHA_COMPOSITE((u8)(old_color >> 8), (*(ty +1+buffer)), alpha)) << 8)
+																																			|((ALPHA_COMPOSITE((u8)(old_color >> 16),(*(ty +2+buffer)), alpha)) << 16);
 				}
+			}
 		}
 	else 
 		{
