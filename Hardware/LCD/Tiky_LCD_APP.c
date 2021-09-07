@@ -11,7 +11,7 @@
 #include "TK499_GPIO.h"
 #include "main.h"
 
-#define ALPHA_COMPOSITE(bg,fg,a) ( (((fg) * (a)) + ((bg) * (255-(a)))) >> 8 )
+#define ALPHA_COMPOSITE(bg,fg,a) ( (((fg) * (a)) + ((bg) * (255-(a)))) >> 8 ) // (x >> 8) is close enough to (x / 255)
 
 #if USE_GT911_CTP
 
@@ -1018,7 +1018,7 @@ char display_picture(char *filename)
 	u16 ReadValue;
 	FATFS fs;            // Work area (file system object) for logical drive
 	FIL fsrc;      			// file objects
-	u8 buffer[2048]; 		// file copy buffer
+	__align(4) u8 buffer[2048]; 		// file copy buffer, aligned to 32 bits for optimized alpha composition
 	FRESULT res;         // FatFs function common result code
 	UINT br;         		// File R/W count
 	u16 r_data,g_data,b_data;	
@@ -1173,12 +1173,20 @@ char display_picture(char *filename)
 				f_read(&fsrc, buffer, temp, &br);
 				for(ty=0;ty<temp;ty+=4)
 				{	
-					char alpha = (*(ty +3+buffer));
-					u32 old_color = LTDC_emWin[Xstart+bmp.pic_h_l-i+Ystart+XSIZE_PHYS*(ty>>2)];
-					
-					LTDC_emWin[Xstart+bmp.pic_h_l-i+Ystart+XSIZE_PHYS*(ty>>2)] = (ALPHA_COMPOSITE((u8)old_color,         (*(ty +0+buffer)), alpha))
-																																			|((ALPHA_COMPOSITE((u8)(old_color >> 8), (*(ty +1+buffer)), alpha)) << 8)
-																																			|((ALPHA_COMPOSITE((u8)(old_color >> 16),(*(ty +2+buffer)), alpha)) << 16);
+					u32 new_color = (*((u32*)(ty+buffer)));
+					unsigned char alpha = (char)(new_color >> 24);
+					if (alpha) { // most transparent images will have enough fully transparent pixels for this to be beneficial 
+						if (alpha == 255) { // most transparent images will have enough non transparent pixels for this to be beneficial 
+							LTDC_emWin[Xstart+bmp.pic_h_l-i+Ystart+XSIZE_PHYS*(ty>>2)] = new_color & 0x00FFFFFF; // store the new color without opacity
+						} else {
+						u32 old_color = LTDC_emWin[Xstart+bmp.pic_h_l-i+Ystart+XSIZE_PHYS*(ty>>2)];
+						LTDC_emWin[Xstart+bmp.pic_h_l-i+Ystart+XSIZE_PHYS*(ty>>2)] = \
+							(ALPHA_COMPOSITE((u8)old_color,          (u8)new_color,         alpha))         // red composite
+							|((ALPHA_COMPOSITE((u8)(old_color >> 8), (u8)(new_color >> 8),  alpha)) << 8)   // green composite
+							|((ALPHA_COMPOSITE((u8)(old_color >> 16),(u8)(new_color >> 16), alpha)) << 16); // blue composite
+						}
+					}
+
 				}
 			}
 		}
