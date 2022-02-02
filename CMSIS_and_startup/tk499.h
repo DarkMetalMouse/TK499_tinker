@@ -1222,11 +1222,10 @@ typedef struct
 #define GPIOC_BASE            (AHB1PERIPH_BASE + 0x0800)
 #define GPIOD_BASE            (AHB1PERIPH_BASE + 0x0C00)
 #define GPIOE_BASE            (AHB1PERIPH_BASE + 0x1000) 
-#define RTC_BASE              (APB1PERIPH_BASE + 0x2800)
-#define CRC_BASE              (AHB1PERIPH_BASE + 0x3000)
-#define RCC_BASE              (AHB1PERIPH_BASE + 0x3800)
-#define BKP_BASE              (AHB1PERIPH_BASE + 0x4000)
-#define DMA1_BASE             (AHB1PERIPH_BASE + 0x6000)
+#define CRC_BASE              (AHB1PERIPH_BASE + 0x3000) // 8
+#define RCC_BASE              (AHB1PERIPH_BASE + 0x3800) // 2
+#define BKP_BASE              (AHB1PERIPH_BASE + 0x4000) // 2
+#define DMA1_BASE             (AHB1PERIPH_BASE + 0x6000) // 8
 #define DMA1_Channel1_BASE    (AHB1PERIPH_BASE + 0x6008)
 #define DMA1_Channel2_BASE    (AHB1PERIPH_BASE + 0x601C)
 #define DMA1_Channel3_BASE    (AHB1PERIPH_BASE + 0x6030)
@@ -1265,11 +1264,11 @@ typedef struct
 #define UART4_BASE            (APB2PERIPH_BASE + 0x1400)
 #define UART5_BASE            (APB2PERIPH_BASE + 0x1800)
 #define ADC1_BASE             (APB2PERIPH_BASE + 0x2000)
-#define SDIO1_BASE            (APB2PERIPH_BASE + 0x2C00)
-#define SDIO2_BASE            (APB2PERIPH_BASE + 0x3000)
-#define SYSCFG_BASE           (APB2PERIPH_BASE + 0x3800)
+#define SDIO1_BASE            (APB2PERIPH_BASE + 0x2C00) 
+#define SDIO2_BASE            (APB2PERIPH_BASE + 0x3000) // 3
+#define SYSCFG_BASE           (APB2PERIPH_BASE + 0x3800) // 2
 #define EXTI_BASE             (APB2PERIPH_BASE + 0x3C00)
-#define SPI1_BASE             (APB2PERIPH_BASE + 0x5000)
+#define SPI1_BASE             (APB2PERIPH_BASE + 0x5000) // 5
 #define SPI2_BASE             (APB2PERIPH_BASE + 0x5400)
 #define SPI3_BASE             (APB2PERIPH_BASE + 0x5800)
 #define SPI4_BASE             (APB2PERIPH_BASE + 0x5C00)
@@ -1285,6 +1284,9 @@ typedef struct
 #define TIM8_BASE             (APB1PERIPH_BASE + 0x1400)
 #define TIM9_BASE             (APB1PERIPH_BASE + 0x1800)
 #define TIM10_BASE            (APB1PERIPH_BASE + 0x1C00)
+#define RTC_BASE              (APB1PERIPH_BASE + 0x2800)
+//#define WWDG_BASE             (APB1PERIPH_BASE + 0x2C00) // No Idea if this is true
+#define IWDG_BASE             (APB1PERIPH_BASE + 0x3000)
 #define I2C1_BASE             (APB1PERIPH_BASE + 0x5400)
 #define I2C2_BASE             (APB1PERIPH_BASE + 0x5800)
 #define I2C3_BASE             (APB1PERIPH_BASE + 0x5C00)

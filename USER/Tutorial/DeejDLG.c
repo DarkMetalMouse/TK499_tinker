@@ -168,14 +168,14 @@ WM_HWIN CreateDeej(void) {
 }
 
 // USER START (Optionally insert additional public code)
-void UpdateDeej(void) {
+void DeejSendSliderValues(void) {
 	unsigned int i;
 	for(i = 0; i < 5; i++)
 		_sliderValues[i] = 1023-SLIDER_GetValue(_hSliders[i]);
 	for(i = 0; i < 5-1; i++){
-		printf("%d|",_sliderValues[i]);
+		printf("%d,0|",_sliderValues[i]);
 	}
-	printf("%d\r\n",_sliderValues[i]);
+	printf("%d,0\r\n",_sliderValues[i]);
 }
 // USER END
 

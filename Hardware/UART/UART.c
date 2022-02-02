@@ -1,24 +1,39 @@
 #include "sys.h"
 #include "uart.h"
 #include "main.h"
+#include "ring_buffer.h"
 
 //加入下列代码，不用勾选USE microlib,使用printf
+
+ring_buffer RX_buffer = {0, 0};
 
 #pragma import(__use_no_semihosting)                          
 struct __FILE 
 { 
 int handle; 
 }; 
-FILE __stdout;       
+FILE __stdout;
+FILE __stdin;
 int _sys_exit(int x) 
 { 
 x = x; 
+	return x;
 } 
 int fputc(int ch, FILE *f)
 {      
 while((UART1->CSR &0x1) == 0){}
 	UART1->TDR = (u8) ch;      
 return ch;
+}
+int fgetc(FILE *f)
+{
+	while(ring_buffer_available(&RX_buffer) == 0);
+	return ring_buffer_read(&RX_buffer);
+}
+
+unsigned int Uart1Available() 
+{
+	return ring_buffer_available(&RX_buffer);
 }
 
 void UartInit(UART_TypeDef* UARTx,int BaudRate)
@@ -68,9 +83,9 @@ void UART1_IRQHandler(void)
 {
    if(UART1->ISR & (1<<1))
 	 {
-		  UART1->RDR = Uart1_Receive();
+		  ring_buffer_write(&RX_buffer, Uart1_Receive());
 	    UART1->ICR |= 1<<1;
-		  printf("UART1_RDR = %d\n",UART1->RDR);
+//		  printf("UART1_RDR = %d\n",UART1->RDR);
 	 }
 }
 void send_data(u8 data)

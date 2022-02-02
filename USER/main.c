@@ -1,4 +1,5 @@
 #include "main.h"
+#include "UART.h"
 //#include "MM1_240.h"
 //#include "MM_T035.h"
 //#include "set.h"
@@ -9,13 +10,42 @@
 #include "deej_logo.h"
 //#include "part.h"
 #include "Tiky_LCD_APP.h"
+#include "HAL_iwdg.h"
+
 void speed_test(void);
+
+#define MAX_LEN 80
+#define READ_OK 0
+#define READ_TOO_LONG 1
+
+int send_slider_values = 0;
+char command_buffer[MAX_LEN+1]; // +1 for null char
+
+
+int read_command_until(char end)
+{
+	char c = getchar();
+	unsigned int i = 0;
+	while(c != end && i < MAX_LEN) 
+	{
+		command_buffer[i++] = c;
+		c = getchar();
+	}
+	command_buffer[i] = '\0';
+	
+	return i;
+}
 
 int main(void)
 {  	
-		volatile int i,a,b,c,d;
+		volatile int i;
+//		volatile int i,a,b,c,d;
+//		for(i = 0; i < 50000; i++);
+	
 		RemapVtorTable();
 		SystemClk_HSEInit(RCC_PLLMul_20);//启动PLL时钟
+	
+//		for(i = 0; i < 50000; i++);
 
 		RCC->AHB1ENR |= 3<<21;    //DMA1,DMA2 Clock
 		
@@ -23,7 +53,7 @@ int main(void)
 		User_RGB_LCD_Initial();//初始化液晶屏入口
 		UartInit(UART1,115200);      //配置串口1，波特率为460800
 		printf("\r\n  Hello!welcome to use TK499!  \r\n");
-	
+
 		GUI_Init();//emWin 初始化
 		GUI_SetTextMode(GUI_TM_TRANS);//透明方式显示字体，即无背景
 //		TIM8_Config(1000,12000);   //配置定时器8，0.5秒中断一次
@@ -67,9 +97,36 @@ int main(void)
 		//printf("CreateDeej\r\n");
 		while(1) //几个子例程，可以逐个释放出来用
 			{
-				UpdateDeej();
+				if (Uart1Available() != 0){
+					read_command_until('\n');
+					if(strncmp(command_buffer,"deej.", 5) == 0) {
+						if(strncmp(&(command_buffer[5]),"core.", 5) == 0) {
+							if        (strcmp(&(command_buffer[10]),"start") == 0) {
+								send_slider_values = 1;
+							} else if (strcmp(&(command_buffer[10]),"stop") == 0) {
+								send_slider_values = 0;
+							} else if (strcmp(&(command_buffer[10]),"values") == 0) {
+								DeejSendSliderValues();
+//							} else if (strcmp(&(command_buffer[10]),"reboot") == 0) {
+////								IWDG->KR = 0x0000CCCCu; // IWDG_Enable();
+////								IWDG->KR = 0x00005555u; // IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
+////								IWDG->PR = 0x00000000u; // IWDG_SetPrescaler(IWDG_Prescaler_4);
+////								IWDG->RLR = 4095; //IWDG_SetReload(0xFFF);
+////								while ((IWDG->SR & 0x3) != 0x00u);
+////								IWDG->KR = 0x0000AAAAu; // IWDG_ReloadCounter();
+//								NVIC_SystemReset();
+							}
+						}
+					}
+					
+				}
+//				printf("%x %x %x %x\r\n",IWDG->SR,IWDG->KR,IWDG->RLR,IWDG->PR);
+				if(send_slider_values) { 
+					DeejSendSliderValues();
+				}
 				GUI_Delay(10);
-//				WIDGET_ButtonRound();
+
+				//				WIDGET_ButtonRound();
 //				WIDGET_NumPad();
 //				VGA_Demonstration();
 //				WIDGET_Effect();

@@ -28,6 +28,6 @@ extern void COLOR_ShowColorBar(void);
 extern void WIDGET_NumPad(void);
 extern void WIDGET_Effect(void);
 extern void CreateDeej(void);
-extern void UpdateDeej(void);
+extern void DeejSendSliderValues(void);
 
 #endif

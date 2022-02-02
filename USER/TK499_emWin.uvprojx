@@ -468,6 +468,11 @@
               <FileType>1</FileType>
               <FilePath>..\Hardware\LCD\Tiky_LCD_APP.c</FilePath>
             </File>
+            <File>
+              <FileName>ring_buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\UART\ring_buffer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -732,6 +737,11 @@
               <FileName>HAL_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Hal_lib\src\HAL_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>HAL_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hal_lib\src\HAL_iwdg.c</FilePath>
             </File>
           </Files>
         </Group>
