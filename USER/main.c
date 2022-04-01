@@ -1,4 +1,5 @@
 #include "main.h"
+#include "stdlib.h"
 #include "UART.h"
 //#include "MM1_240.h"
 //#include "MM_T035.h"
@@ -17,26 +18,12 @@ void speed_test(void);
 #define READ_OK 0
 #define READ_TOO_LONG 1
 
-int send_slider_values = 0;
-char command_buffer[MAX_LEN + 1]; // +1 for null char
-
-int read_command_until(char end)
-{
-	char c = getchar();
-	unsigned int i = 0;
-	while (c != end && i < MAX_LEN)
-	{
-		command_buffer[i++] = c;
-		c = getchar();
-	}
-	command_buffer[i] = '\0';
-
-	return i;
-}
+char input[MAX_LEN + 1]; // +1 for null char
+int levels[5] = {0};
 
 int main(void)
 {
-
+	int i;
 	RemapVtorTable();
 	SystemClk_HSEInit(RCC_PLLMul_20); //启动PLL时钟
 
@@ -94,7 +81,16 @@ int main(void)
 		DeejSendSliderValues();
 
 		GUI_Delay(10);
-
+		if (Uart1Available() != 0)
+		{
+			gets(input);
+			levels[0] = atoi(strtok(input, "|"));
+			for (i = 1; i < 5; i++)
+			{
+				levels[i] = atoi(strtok(NULL, "|"));
+			}
+		}
+		DeejUpdateLevels(levels);
 		//				WIDGET_ButtonRound();
 		//				WIDGET_NumPad();
 		//				VGA_Demonstration();

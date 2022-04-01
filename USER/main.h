@@ -29,5 +29,6 @@ extern void WIDGET_NumPad(void);
 extern void WIDGET_Effect(void);
 extern void CreateDeej(void);
 extern void DeejSendSliderValues(void);
+extern void DeejUpdateLevels(int levels[]);
 
 #endif

@@ -30,12 +30,18 @@
 *
 **********************************************************************
 */
-#define ID_FRAMEWIN_0         (GUI_ID_USER + 0x01)
+#define ID_FRAMEWIN_0       (GUI_ID_USER + 0x01)
 #define ID_SLIDER_0         (GUI_ID_USER + 0x02)
 #define ID_SLIDER_1         (GUI_ID_USER + 0x03)
 #define ID_SLIDER_2         (GUI_ID_USER + 0x04)
 #define ID_SLIDER_3         (GUI_ID_USER + 0x05)
 #define ID_SLIDER_4         (GUI_ID_USER + 0x06)
+#define ID_PROGBAR_0        (GUI_ID_USER + 0x07)
+#define ID_PROGBAR_1        (GUI_ID_USER + 0x08)
+#define ID_PROGBAR_2        (GUI_ID_USER + 0x09)
+#define ID_PROGBAR_3        (GUI_ID_USER + 0x0a)
+#define ID_PROGBAR_4        (GUI_ID_USER + 0x0b)
+
 
 // USER START (Optionally insert additional defines)
 // USER END
@@ -57,11 +63,17 @@
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { FRAMEWIN_CreateIndirect, "Deej", ID_FRAMEWIN_0, 10, 10, 835, 470, 0, 0x0, 0 },
   // USER START (Optionally insert additional widgets)
-	{ SLIDER_CreateIndirect, "Slider", ID_SLIDER_0, 20, 20, 50, 400, 8, 0x0, 0 },
-  { SLIDER_CreateIndirect, "Slider", ID_SLIDER_1, 204, 20, 50, 400, 8, 0x0, 0 },
-	{ SLIDER_CreateIndirect, "Slider", ID_SLIDER_2, 388, 20, 50, 400, 8, 0x0, 0 },
-  { SLIDER_CreateIndirect, "Slider", ID_SLIDER_3, 571, 20, 50, 400, 8, 0x0, 0 },
-	{ SLIDER_CreateIndirect, "Slider", ID_SLIDER_4, 755, 20, 50, 400, 8, 0x0, 0 },
+	{ SLIDER_CreateIndirect, "Slider", ID_SLIDER_0,  20, 20, 50, 400, 8, 0x0, 0 },
+  { SLIDER_CreateIndirect, "Slider", ID_SLIDER_1, 170, 20, 50, 400, 8, 0x0, 0 },
+	{ SLIDER_CreateIndirect, "Slider", ID_SLIDER_2, 320, 20, 50, 400, 8, 0x0, 0 },
+  { SLIDER_CreateIndirect, "Slider", ID_SLIDER_3, 470, 20, 50, 400, 8, 0x0, 0 },
+	{ SLIDER_CreateIndirect, "Slider", ID_SLIDER_4, 620, 20, 50, 400, 8, 0x0, 0 },
+	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_0,   20 + 60, 20, 50, 400, 1, 0x0, 0 },
+	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_1,  170 + 60, 20, 50, 400, 1, 0x0, 0 },
+	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_2,  320 + 60, 20, 50, 400, 1, 0x0, 0 },
+	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_3,  470 + 60, 20, 50, 400, 1, 0x0, 0 },
+	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_4,  620 + 60, 20, 50, 400, 1, 0x0, 0 },
+	
 
   // USER END
 };
@@ -77,6 +89,7 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 
 // USER START (Optionally insert additional static code)
 static WM_HWIN _hSliders[5];
+static WM_HWIN _hProgbars[5];
 static int _sliderValues[5];
 // USER END
 
@@ -163,6 +176,9 @@ WM_HWIN CreateDeej(void) {
 	for(i = 1; i <= 5; i++){
 		_hSliders[i-1] = WM_GetDialogItem(hWin, _aDialogCreate[i].Id);
 		SLIDER_SetRange(_hSliders[i-1],0,1023);
+		
+		_hProgbars[i-1] = WM_GetDialogItem(hWin, _aDialogCreate[i+5].Id);
+		PROGBAR_SetMinMax(_hProgbars[i-1],0,100);
 	}
   return hWin;
 }
@@ -177,6 +193,14 @@ void DeejSendSliderValues(void) {
 	}
 	printf("%d,0\r\n",_sliderValues[i]);
 }
+
+void DeejUpdateLevels(int levels[]) {
+	unsigned int i;
+	for(i = 0; i < 5; i++) {
+		PROGBAR_SetValue(_hProgbars[i],levels[i]);
+	}
+}
+
 // USER END
 
 /*************************** End of file ****************************/
