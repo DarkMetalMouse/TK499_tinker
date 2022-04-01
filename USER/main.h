@@ -23,11 +23,12 @@ typedef unsigned int  uint32;
 #include "qspi_fun.h"
 #include "xbf_font.h"
 
+#define SLIDER_NUM 5
 
 extern void COLOR_ShowColorBar(void);
 extern void WIDGET_NumPad(void);
 extern void WIDGET_Effect(void);
-extern void CreateDeej(void);
+extern WM_HWIN CreateDeej(void);
 extern void DeejSendSliderValues(void);
 extern void DeejUpdateLevels(int levels[]);
 

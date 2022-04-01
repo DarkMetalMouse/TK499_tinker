@@ -80,15 +80,12 @@ int main(void)
 
 		DeejSendSliderValues();
 
-		GUI_Delay(10);
-		if (Uart1Available() != 0)
+		GUI_Delay(1);
+		gets(input);
+		levels[0] = atoi(strtok(input, "|"));
+		for (i = 1; i < SLIDER_NUM; i++)
 		{
-			gets(input);
-			levels[0] = atoi(strtok(input, "|"));
-			for (i = 1; i < 5; i++)
-			{
-				levels[i] = atoi(strtok(NULL, "|"));
-			}
+			levels[i] = atoi(strtok(NULL, "|"));
 		}
 		DeejUpdateLevels(levels);
 		//				WIDGET_ButtonRound();

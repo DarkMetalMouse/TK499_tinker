@@ -20,6 +20,22 @@
 
 // USER START (Optionally insert additional includes)
 #include <stdio.h>
+#include "main.h"
+
+#define SLIDER_WIDTH 50
+
+#define MARGIN 30
+#define TOP_MARGIN MARGIN
+#define BOTTOM_MARGIN MARGIN
+#define LEFT_MARGIN MARGIN
+#define RIGHT_MARGIN MARGIN
+
+#define SPACE_BETWEEN_SLIDERS_X (((YSIZE_PHYS)-(LEFT_MARGIN)-(RIGHT_MARGIN)-(SLIDER_WIDTH)*(SLIDER_NUM)) / ((SLIDER_NUM) - 1))
+
+#define SLIDER_X_POS(i) ((SPACE_BETWEEN_SLIDERS_X + (SLIDER_WIDTH))*(i) + (RIGHT_MARGIN))
+
+#define SLIDER_HEIGHT ((XSIZE_PHYS) - (TOP_MARGIN) - (BOTTOM_MARGIN))
+
 // USER END
 
 #include "DIALOG.h" 
@@ -30,7 +46,7 @@
 *
 **********************************************************************
 */
-#define ID_FRAMEWIN_0       (GUI_ID_USER + 0x01)
+#define ID_WINDOW_0         (GUI_ID_USER + 0x01)
 #define ID_SLIDER_0         (GUI_ID_USER + 0x02)
 #define ID_SLIDER_1         (GUI_ID_USER + 0x03)
 #define ID_SLIDER_2         (GUI_ID_USER + 0x04)
@@ -61,20 +77,18 @@
 *       _aDialogCreate
 */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-  { FRAMEWIN_CreateIndirect, "Deej", ID_FRAMEWIN_0, 10, 10, 835, 470, 0, 0x0, 0 },
+  { WINDOW_CreateIndirect, "Deej", ID_WINDOW_0, 0, 0, YSIZE_PHYS, XSIZE_PHYS, 0, 0x0, 0 },
   // USER START (Optionally insert additional widgets)
-	{ SLIDER_CreateIndirect, "Slider", ID_SLIDER_0,  20, 20, 50, 400, 8, 0x0, 0 },
-  { SLIDER_CreateIndirect, "Slider", ID_SLIDER_1, 170, 20, 50, 400, 8, 0x0, 0 },
-	{ SLIDER_CreateIndirect, "Slider", ID_SLIDER_2, 320, 20, 50, 400, 8, 0x0, 0 },
-  { SLIDER_CreateIndirect, "Slider", ID_SLIDER_3, 470, 20, 50, 400, 8, 0x0, 0 },
-	{ SLIDER_CreateIndirect, "Slider", ID_SLIDER_4, 620, 20, 50, 400, 8, 0x0, 0 },
-	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_0,   20 + 60, 20, 50, 400, 1, 0x0, 0 },
-	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_1,  170 + 60, 20, 50, 400, 1, 0x0, 0 },
-	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_2,  320 + 60, 20, 50, 400, 1, 0x0, 0 },
-	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_3,  470 + 60, 20, 50, 400, 1, 0x0, 0 },
-	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_4,  620 + 60, 20, 50, 400, 1, 0x0, 0 },
-	
-
+	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_0, SLIDER_X_POS(0), TOP_MARGIN, SLIDER_WIDTH, SLIDER_HEIGHT, 1, 0x0, 0 },
+	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_1, SLIDER_X_POS(1), TOP_MARGIN, SLIDER_WIDTH, SLIDER_HEIGHT, 1, 0x0, 0 },
+	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_2, SLIDER_X_POS(2), TOP_MARGIN, SLIDER_WIDTH, SLIDER_HEIGHT, 1, 0x0, 0 },
+	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_3, SLIDER_X_POS(3), TOP_MARGIN, SLIDER_WIDTH, SLIDER_HEIGHT, 1, 0x0, 0 },
+	{ PROGBAR_CreateIndirect, "Progbar", ID_PROGBAR_4, SLIDER_X_POS(4), TOP_MARGIN, SLIDER_WIDTH, SLIDER_HEIGHT, 1, 0x0, 0 },
+	{ SLIDER_CreateIndirect,  "Slider",  ID_SLIDER_0,  SLIDER_X_POS(0), TOP_MARGIN, SLIDER_WIDTH, SLIDER_HEIGHT, 8, 0x0, 0 },
+  { SLIDER_CreateIndirect,  "Slider",  ID_SLIDER_1,  SLIDER_X_POS(1), TOP_MARGIN, SLIDER_WIDTH, SLIDER_HEIGHT, 8, 0x0, 0 },
+	{ SLIDER_CreateIndirect,  "Slider",  ID_SLIDER_2,  SLIDER_X_POS(2), TOP_MARGIN, SLIDER_WIDTH, SLIDER_HEIGHT, 8, 0x0, 0 },
+  { SLIDER_CreateIndirect,  "Slider",  ID_SLIDER_3,  SLIDER_X_POS(3), TOP_MARGIN, SLIDER_WIDTH, SLIDER_HEIGHT, 8, 0x0, 0 },
+	{ SLIDER_CreateIndirect,  "Slider",  ID_SLIDER_4,  SLIDER_X_POS(4), TOP_MARGIN, SLIDER_WIDTH, SLIDER_HEIGHT, 8, 0x0, 0 },
   // USER END
 };
 
@@ -88,9 +102,9 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
 */
 
 // USER START (Optionally insert additional static code)
-static WM_HWIN _hSliders[5];
-static WM_HWIN _hProgbars[5];
-static int _sliderValues[5];
+static WM_HWIN _hSliders[SLIDER_NUM];
+static WM_HWIN _hProgbars[SLIDER_NUM];
+static int _sliderValues[SLIDER_NUM];
 // USER END
 
 /*********************************************************************
@@ -166,18 +180,17 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 *
 *       CreateDeej
 */
-WM_HWIN CreateDeej(void);
 WM_HWIN CreateDeej(void) {
   WM_HWIN hWin;
 	unsigned int i;
 	
   hWin = GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
 	
-	for(i = 1; i <= 5; i++){
-		_hSliders[i-1] = WM_GetDialogItem(hWin, _aDialogCreate[i].Id);
+	for(i = 1; i <= SLIDER_NUM; i++){
+		_hSliders[i-1] = WM_GetDialogItem(hWin, _aDialogCreate[i+5].Id);
 		SLIDER_SetRange(_hSliders[i-1],0,1023);
 		
-		_hProgbars[i-1] = WM_GetDialogItem(hWin, _aDialogCreate[i+5].Id);
+		_hProgbars[i-1] = WM_GetDialogItem(hWin, _aDialogCreate[i].Id);
 		PROGBAR_SetMinMax(_hProgbars[i-1],0,100);
 	}
   return hWin;
@@ -186,9 +199,9 @@ WM_HWIN CreateDeej(void) {
 // USER START (Optionally insert additional public code)
 void DeejSendSliderValues(void) {
 	unsigned int i;
-	for(i = 0; i < 5; i++)
+	for(i = 0; i < SLIDER_NUM; i++)
 		_sliderValues[i] = 1023-SLIDER_GetValue(_hSliders[i]);
-	for(i = 0; i < 5-1; i++){
+	for(i = 0; i < SLIDER_NUM-1; i++){
 		printf("%d,0|",_sliderValues[i]);
 	}
 	printf("%d,0\r\n",_sliderValues[i]);
@@ -196,7 +209,7 @@ void DeejSendSliderValues(void) {
 
 void DeejUpdateLevels(int levels[]) {
 	unsigned int i;
-	for(i = 0; i < 5; i++) {
+	for(i = 0; i < SLIDER_NUM; i++) {
 		PROGBAR_SetValue(_hProgbars[i],levels[i]);
 	}
 }
